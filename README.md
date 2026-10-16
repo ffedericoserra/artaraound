@@ -1,6 +1,8 @@
+*Note: this repository is a personal mirror of the [ArtAround](https://github.com/ffedericoserra/tec-web) project developed my Matteo Mazzetti, Andrea Ziccone, and me (Federico Serra) for the Web Technologies course at University of Bologna. I'm using it to gain knowledge with new technologies.*
+
 # ArtAround
 
-ArtAround is a web app for guided museum tours.  of two frontends that share one backend:
+ArtAround is a web app for guided museum tours. It consists of two frontends that share one backend:
 
 - **Marketplace**: authors write descriptions of artworks ("items") in 3 tones × 3 lengths and arrange them into tours ("visits"). Items can be bought with an in-app wallet.
 - **Navigator**: visitors pick a museum and a visit, then follow it stop by stop on their phone, with text-to-speech, voice commands and a museum map.
