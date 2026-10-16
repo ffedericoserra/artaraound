@@ -15,7 +15,7 @@ Built by Federico Serra, for the Web Technologies course at the University of Bo
 
 **Requirements:** Node.js 22 and a MongoDB instance.
 
-**1. Set up the `.env` file in `sources/`:**
+**1. Set up the `.env` file in the project root:**
 ```
 NODE_ENV=development
 PORT=8000
@@ -29,12 +29,12 @@ JWT_EXPIRES_IN=7d
 
 **2. Build the navigator:**
 ```bash
-cd sources/frontend-navigator && npm install && npm run build
+cd frontend-navigator && npm install && npm run build
 ```
 
 **3. Start the server:**
 ```bash
-cd sources && npm install && npm start
+npm install && npm start
 ```
 
 - Navigator: http://localhost:8000
@@ -69,7 +69,7 @@ React 18 + Vite single-page app, mobile-first. Built into `dist/` and served by 
 ## Structure
 
 ```
-sources/
+artaround/
 ├── .env                       # Environment config
 ├── data/
 │   └── museums/               # Museum config files (JSON, loaded by the seed)

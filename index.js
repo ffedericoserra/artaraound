@@ -1,2 +1,2 @@
-require("./sources/src/index.js")
+require("./src/index.js")
 
