@@ -16,6 +16,14 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Malformed id (e.g. GET /api/items/not-an-id): a client error, not a 500.
+  // The message is generic so internal details (ObjectId, model names) don't leak.
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      error: `Invalid ${err.path === '_id' ? 'id' : err.path} format`,
+    });
+  }
+
   // Mongoose duplicate key error
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];

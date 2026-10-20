@@ -9,8 +9,6 @@ ArtAround is a web app for guided museum tours. It consists of two frontends tha
 
 Visits can also be run as **group visits**: a host shares a session code, participants join and follow the tour in sync, with a group chat, questions along the way and a final quiz.
 
-Built by Federico Serra, for the Web Technologies course at the University of Bologna.
-
 ## Running
 
 *Note: every server start resets the database with demo data (two museums, sample visits and test accounts). Changes made through the UI are not kept.*

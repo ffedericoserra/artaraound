@@ -1,0 +1,5 @@
+local/artaround/contract/TestData.class
+local/artaround/contract/ApiTestBase.class
+local/artaround/contract/ItemTest.class
+local/artaround/contract/HealthTest.class
+local/artaround/contract/AuthTest.class
