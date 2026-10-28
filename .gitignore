@@ -23,3 +23,11 @@ next-prompt.md
 /frontend-navigator/dist/
 AGENTS.md
 TODO
+docs/
+
+# Maven build output
+target/
+
+# .NET tests build output
+bin/
+obj/
