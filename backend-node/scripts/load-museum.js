@@ -3,8 +3,8 @@
  * Reads JSON config files and upserts museum + contents into MongoDB
  *
  * Usage:
- *   node scripts/load-museum.js data/museums/uffizi.json   # single file
- *   node scripts/load-museum.js data/museums/              # all .json in directory
+ *   node scripts/load-museum.js ../data/museums/uffizi.json   # single file
+ *   node scripts/load-museum.js ../data/museums/              # all .json in directory
  */
 
 const fs = require('fs');
@@ -13,7 +13,7 @@ const { connectDB, disconnectDB } = require('../src/config/db');
 const Museum = require('../src/models/Museum');
 const Content = require('../src/models/Content');
 
-const CONTENT_IMAGES_DIR = path.join(__dirname, '..', 'uploads', 'contents');
+const CONTENT_IMAGES_DIR = path.join(__dirname, '..', '..', 'uploads', 'contents');
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 
 /**

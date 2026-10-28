@@ -19,10 +19,10 @@ services:
   node_app:
     image: node:22
     container_name: local_node_app
-    working_dir: /app
+    working_dir: /app/backend-node
     volumes:
       - ./:/app              # Maps your current folder to /app in container
-      - /app/node_modules    # Prevents local node_modules from overwriting container's
+      - /app/backend-node/node_modules    # Prevents local node_modules from overwriting container's
     ports:
       - "8000:8000"          # Maps port 8000 (from index.js) to localhost
     depends_on:

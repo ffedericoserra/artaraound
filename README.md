@@ -15,7 +15,7 @@ Visits can also be run as **group visits**: a host shares a session code, partic
 
 **Requirements:** Node.js 22 and a MongoDB instance.
 
-**1. Set up the `.env` file in the project root:**
+**1. Set up the `.env` file in `backend-node/`:**
 ```
 NODE_ENV=development
 PORT=8000
@@ -34,7 +34,7 @@ cd frontend-navigator && npm install && npm run build
 
 **3. Start the server:**
 ```bash
-npm install && npm start
+cd backend-node && npm install && npm start
 ```
 
 - Navigator: http://localhost:8000
@@ -70,24 +70,26 @@ React 18 + Vite single-page app, mobile-first. Built into `dist/` and served by 
 
 ```
 artaround/
-├── .env                       # Environment config
 ├── data/
 │   └── museums/               # Museum config files (JSON, loaded by the seed)
 ├── uploads/                   # Images, served at /uploads
-├── src/                       # Backend (Node + Express + Mongoose)
-│   ├── index.js               # Entry point: wires API, marketplace, navigator
-│   ├── config/                # Database and env setup
-│   ├── models/                # User, Museum, Content, Item, Visit, Session
-│   ├── controllers/           # Request handlers
-│   ├── routes/                # API route definitions
-│   ├── schemas/               # Zod validation schemas
-│   ├── middleware/            # Auth, validation, error handling
-│   └── services/              # Socket.IO sync, wallet purchases
+├── backend-node/              # Backend (Node + Express + Mongoose)
+│   ├── .env                   # Environment config
+│   ├── src/
+│   │   ├── index.js           # Entry point: wires API, marketplace, navigator
+│   │   ├── config/            # Database and env setup
+│   │   ├── models/            # User, Museum, Content, Item, Visit, Session
+│   │   ├── controllers/       # Request handlers
+│   │   ├── routes/            # API route definitions
+│   │   ├── schemas/           # Zod validation schemas
+│   │   ├── middleware/        # Auth, validation, error handling
+│   │   └── services/          # Socket.IO sync, wallet purchases
+│   └── scripts/
+│       ├── seed.js            # Resets the demo database
+│       └── load-museum.js     # Loads museum config files
+├── contract-tests/            # C# contract suite (xUnit), run against any backend
 ├── frontend/marketplace/      # Marketplace: pages, scripts, stylesheets
-├── frontend-navigator/        # Navigator (React + Vite)
-│   ├── src/                   # Pages, components, styles, translations
-│   └── vite.config.js         # Dev server proxy to :8000
-└── scripts/
-    ├── seed.js                # Resets the demo database
-    └── load-museum.js         # Loads museum config files
+└── frontend-navigator/        # Navigator (React + Vite)
+    ├── src/                   # Pages, components, styles, translations
+    └── vite.config.js         # Dev server proxy to :8000
 ```

@@ -22,11 +22,11 @@ const server = http.createServer(app)
 app.use(cors())
 app.use(express.json())
 // app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")))
+app.use("/uploads", express.static(path.join(__dirname, "..", "..", "uploads")))
 
 // Previous marketplace implementation, kept reachable under its own prefix.
 // It uses clean routes, so each page is wired explicitly.
-const oldMarketplaceDir = path.join(__dirname, "..", "frontend-marketplace")
+const oldMarketplaceDir = path.join(__dirname, "..", "..", "frontend-marketplace")
 app.use(
     "/marketplace-fede-old/css",
     express.static(path.join(oldMarketplaceDir, "css")),
@@ -51,7 +51,7 @@ app.get("/marketplace-fede-old/museums/:slug", (req, res) => {
 
 // Current marketplace. Fully static: URLs carry real paths and .html
 // extensions, so the whole directory is mounted as-is.
-const marketplaceDir = path.join(__dirname, "..", "frontend", "marketplace")
+const marketplaceDir = path.join(__dirname, "..", "..", "frontend", "marketplace")
 app.get("/marketplace", (req, res) => {
     res.redirect("/marketplace/pages/homepage.html")
 })
@@ -65,7 +65,7 @@ app.use("/api", apiRoutes)
 // only matches paths without a file extension so missing assets still 404
 // instead of returning HTML. Everything not under /api, /marketplace, or
 // /uploads is owned by the navigator.
-const navigatorDir = path.join(__dirname, "..", "frontend-navigator", "dist")
+const navigatorDir = path.join(__dirname, "..", "..", "frontend-navigator", "dist")
 
 // Rotta aggiunta per supportare il percorso generato dal link relativo HTML
 app.use("/frontend-navigator/dist", express.static(navigatorDir))

@@ -24,7 +24,7 @@ const Session = require('../src/models/Session');
 // 15/30/60s), tenute in un file dati a parte per non appesantire lo script.
 // Chiave: Content.universalId. Vedi data/item-descriptions.json.
 const itemDescriptionsByContentId = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../data/item-descriptions.json'), 'utf8')
+  fs.readFileSync(path.join(__dirname, '../../data/item-descriptions.json'), 'utf8')
 );
 
 async function seed() {
@@ -79,7 +79,7 @@ async function seed() {
     // =====================
     // 2. LOAD MUSEUMS FROM CONFIG FILES
     // =====================
-    const museumsDir = path.join(__dirname, '../data/museums');
+    const museumsDir = path.join(__dirname, '../../data/museums');
     await loadMuseums(museumsDir);
 
     // Get loaded museums and contents for creating items/visits
