@@ -16,7 +16,7 @@ const router = express.Router();
 const museumController = require('../controllers/museum.controller');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const validate = require('../middleware/validate');
-const { createMuseumSchema, updateMuseumSchema, createContentSchema } = require('../schemas/museum.schema');
+const { createMuseumSchema, updateMuseumSchema, createContentSchema, contentsQuerySchema } = require('../schemas/museum.schema');
 
 router.get('/', museumController.list);
 router.get('/:id', museumController.getById);
@@ -28,7 +28,7 @@ router.post('/:id/save', requireAuth, museumController.saveMuseum);
 router.delete('/:id/save', requireAuth, museumController.unsaveMuseum);
 
 // Contents
-router.get('/:id/contents', museumController.getContents);
+router.get('/:id/contents', validate(contentsQuerySchema, 'query'), museumController.getContents);
 router.post('/:id/contents', requireAuth, validate(createContentSchema), museumController.createContent);
 
 // Visits for museum (public)

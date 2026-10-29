@@ -54,8 +54,10 @@ const createMuseumSchema = z.object({
 
 const updateMuseumSchema = createMuseumSchema.partial();
 
+const contentTypeSchema = z.enum(['Artwork', 'Artist', 'Movement', 'Place']);
+
 const createContentSchema = z.object({
-  type: z.enum(['Artwork', 'Artist', 'Movement', 'Place']),
+  type: contentTypeSchema,
   universalId: z.string().trim().min(1, 'Universal ID is required'),
   name: z.string().min(1, 'Content name is required').trim(),
   author: z.string().trim().optional(),
@@ -68,8 +70,14 @@ const createContentSchema = z.object({
   qrCode: z.string().optional(),
 });
 
+// GET /museums/:id/contents?type= — an unknown or wrongly cased type is a 400, not an empty list
+const contentsQuerySchema = z.object({
+  type: contentTypeSchema.optional(),
+});
+
 module.exports = {
   createMuseumSchema,
   updateMuseumSchema,
   createContentSchema,
+  contentsQuerySchema,
 };
