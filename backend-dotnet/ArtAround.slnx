@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ArtAround.Api.Tests/ArtAround.Api.Tests.csproj" />
+  <Project Path="ArtAround.Api/ArtAround.Api.csproj" />
+</Solution>

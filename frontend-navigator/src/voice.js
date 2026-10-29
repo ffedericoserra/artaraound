@@ -20,15 +20,8 @@ export const COMMANDS = [
   {
     id: 'more',
     phrases: {
-      it: ['versione più lunga', 'dimmi di più', 'allunga la descrizione'],
-      en: ['longer version', 'tell me more', 'make it longer'],
-    },
-  },
-  {
-    id: 'shorter',
-    phrases: {
-      it: ['versione più breve', 'sintetizza', 'accorcia la descrizione', 'più breve'],
-      en: ['shorter version', 'summarize', 'make it shorter'],
+      it: ['descrivi', "descrivi l'opera", 'dimmi di più'],
+      en: ['describe', 'describe the artwork', 'tell me more'],
     },
   },
   {

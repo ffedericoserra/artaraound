@@ -10,8 +10,8 @@ import SessionPanel from './SessionPanel.jsx';
  * Sending POSTs to /sessions/:code/message and does *not* append locally — the
  * server broadcasts the saved message back to the whole room including the
  * sender, so every client appends by exactly one path and there's no optimistic
- * copy to reconcile. Messages arrive as props from VisitRun, which owns the
- * socket.
+ * copy to reconcile. Messages arrive as props from VisitRun, which owns the hub
+ * connection.
  */
 export default function ChatPanel({ code, messages, meId, onClose }) {
   const { t } = useTranslation();

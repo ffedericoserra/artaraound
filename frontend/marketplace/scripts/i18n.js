@@ -249,7 +249,6 @@
                     audienceExperts: "Esperti",
                     audienceTourists: "Turisti",
                     target: "TARGET",
-                    targetPlaceholder: "Es. famiglie con bambini",
                     itemAuthor: "AUTORE ITEM",
                     sales: "VENDITE",
                     revenue: "RICAVI",
@@ -265,18 +264,9 @@
                     tagChildren: "facile",
                     tagStandard: "medio",
                     tagExperts: "complesso",
-                    durationChildrenAria:
-                        "Durata della descrizione con tono facile",
-                    durationStandardAria:
-                        "Durata della descrizione con tono medio",
-                    durationExpertsAria:
-                        "Durata della descrizione con tono complesso",
                     seconds: "{{count}} SEC",
                     seconds3: "3 SEC",
-                    seconds15: "15 SEC",
-                    seconds30: "30 SEC",
                     seconds45: "45 SEC",
-                    seconds60: "60 SEC",
                     childrenPlaceholder:
                         "Scrivi una descrizione per bambini da {{seconds}} secondi...",
                     childrenPlaceholder3:
@@ -852,7 +842,6 @@
                     audienceExperts: "Experts",
                     audienceTourists: "Tourists",
                     target: "TARGET",
-                    targetPlaceholder: "E.g. families with children",
                     itemAuthor: "ITEM AUTHOR",
                     sales: "SALES",
                     revenue: "REVENUE",
@@ -868,18 +857,9 @@
                     tagChildren: "easy",
                     tagStandard: "medium",
                     tagExperts: "complex",
-                    durationChildrenAria:
-                        "Length of the easy-tone description",
-                    durationStandardAria:
-                        "Length of the medium-tone description",
-                    durationExpertsAria:
-                        "Length of the complex-tone description",
                     seconds: "{{count}} SEC",
                     seconds3: "3 SEC",
-                    seconds15: "15 SEC",
-                    seconds30: "30 SEC",
                     seconds45: "45 SEC",
-                    seconds60: "60 SEC",
                     childrenPlaceholder:
                         "Write a {{seconds}}-second description for children...",
                     childrenPlaceholder3:

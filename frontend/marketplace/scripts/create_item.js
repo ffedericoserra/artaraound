@@ -1,6 +1,7 @@
 // --- CONFIGURAZIONE E AUTENTICAZIONE ---
-const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
-const baseUrl = isLocal ? 'http://localhost:8000' : window.location.origin;
+// The API serves the marketplace, so it is always same-origin (Node on 8000, .NET on 8001).
+// Only a page opened from disk (file://) has no API origin of its own.
+const baseUrl = window.location.protocol === 'file:' ? 'http://localhost:8000' : window.location.origin;
 const myApi = `${baseUrl}/api`;
 const token = localStorage.getItem("token") || localStorage.getItem("artaround_token");
 const CONTENT_PLACEHOLDER = "/uploads/placeholders/template-no-image.jpg";
@@ -115,13 +116,10 @@ const audienceMap = [
     { id: 'expert', tone: 'complex', labelKey: 'itemEditor.tagExperts' }
 ];
 
-const durationMap = ['15s', '30s', '60s'];
-// Tab aperta di default in ogni sezione tono: la durata "media" della terna.
-const DEFAULT_DURATION = durationMap[1];
-
-// --- GUIDA ALLA SCRITTURA: placeholder su misura per tono e lunghezza ---
-// Ognuna delle 9 caselle (3 toni x 3 durate) riceve un suggerimento diverso —
-// lessico atteso, ingombro indicativo in parole e il titolo dell'opera aperta —
+// --- GUIDA ALLA SCRITTURA: placeholder su misura per tono ---
+// Un testo per tono (item_texts ha PK (item_id, tone)). Ognuna delle 3 caselle
+// riceve un suggerimento diverso — lessico atteso, ingombro indicativo in parole
+// e il titolo dell'opera aperta —
 // al posto dello stesso placeholder generico ripetuto ovunque. Bilingue: la
 // lingua dell'interfaccia (window.marketplaceI18n) sceglie quale dizionario
 // usare, cosi' il suggerimento resta nella stessa lingua del resto della UI.
@@ -138,42 +136,26 @@ const TONE_WRITING_GUIDE = {
     }
 };
 
-// Le durate sono lette da un vocalizzatore (TTS), non lette dall'occhio: il
-// conteggio parole è calibrato su un ritmo di lettura parlata (~150 parole/min).
-const DURATION_WRITING_GUIDE = {
-    it: {
-        '15s': { words: '30-40 parole', shape: 'un breve paragrafo essenziale' },
-        '30s': { words: '65-80 parole', shape: 'un paragrafo più corposo, con un dettaglio in più' },
-        '60s': { words: '130-160 parole', shape: 'un racconto esteso su più frasi, pensato per essere ascoltato per intero' }
-    },
-    en: {
-        '15s': { words: '30-40 words', shape: 'one essential short paragraph' },
-        '30s': { words: '65-80 words', shape: 'a fuller paragraph, with one extra detail' },
-        '60s': { words: '130-160 words', shape: 'an extended, multi-sentence account meant to be listened to in full' }
-    }
-};
-
 function getUiLanguage() {
     const lang = window.marketplaceI18n?.getLanguage?.() || document.documentElement.lang || 'it';
     return TONE_WRITING_GUIDE[lang] ? lang : 'it';
 }
 
-function buildTextPlaceholder(audienceId, duration) {
+// Il testo è letto da un vocalizzatore (TTS): ~150 parole/min, quindi 65-80
+// parole sono circa 30 secondi di ascolto.
+function buildTextPlaceholder(audienceId) {
     const lang = getUiLanguage();
     const tone = TONE_WRITING_GUIDE[lang][audienceId];
-    const length = DURATION_WRITING_GUIDE[lang][duration];
-    if (!tone || !length) return '';
+    if (!tone) return '';
     return lang === 'en'
-        ? `Here you can describe "${urlTitle}" using ${tone.lexicon}: ${tone.voice}. Aim for ${length.words} (${length.shape}). \nRemember to save the item before leaving the page.`
-        : `Qui puoi descrivere "${urlTitle}" con ${tone.lexicon}: ${tone.voice}. Punta a ${length.words} (${length.shape}). \nRicorda di salvare l'item prima di cambiare pagina.`;
+        ? `Here you can describe "${urlTitle}" using ${tone.lexicon}: ${tone.voice}. Aim for 65-80 words (about 30 seconds read aloud). \nRemember to save the item before leaving the page.`
+        : `Qui puoi descrivere "${urlTitle}" con ${tone.lexicon}: ${tone.voice}. Punta a 65-80 parole (circa 30 secondi di ascolto). \nRicorda di salvare l'item prima di cambiare pagina.`;
 }
 
 function applyTailoredPlaceholders() {
     audienceMap.forEach(aud => {
-        durationMap.forEach(duration => {
-            const textarea = getAudienceTextarea(aud.id, duration);
-            if (textarea) textarea.placeholder = buildTextPlaceholder(aud.id, duration);
-        });
+        const textarea = getAudienceTextarea(aud.id);
+        if (textarea) textarea.placeholder = buildTextPlaceholder(aud.id);
     });
 }
 
@@ -182,36 +164,16 @@ function applyTailoredPlaceholders() {
 // lasciare quelli tradotti staticamente dal passaggio i18n generico.
 window.addEventListener('marketplace:language-changed', applyTailoredPlaceholders);
 
-function getAudienceTextarea(audienceId, duration) {
-    return document.getElementById(`text-${audienceId}-${duration}`);
-}
-
-function setActiveDuration(audienceId, duration) {
-    const panel = document.getElementById(`audience-panel-${audienceId}`);
-    if (!panel || !durationMap.includes(duration)) return;
-
-    panel.querySelectorAll('.duration-tab').forEach(tab => {
-        const isActive = tab.dataset.duration === duration;
-        tab.classList.toggle('is-active', isActive);
-        tab.setAttribute('aria-pressed', String(isActive));
-        tab.tabIndex = isActive ? 0 : -1;
-    });
-
-    panel.querySelectorAll('.audience-textarea').forEach(textarea => {
-        textarea.classList.toggle('hidden', textarea.dataset.duration !== duration);
-    });
+function getAudienceTextarea(audienceId) {
+    return document.getElementById(`text-${audienceId}`);
 }
 
 function labelAudienceTextareas() {
     audienceMap.forEach((audience) => {
-        const panel = document.getElementById(`audience-panel-${audience.id}`);
-        if (!panel) return;
-        panel.querySelectorAll('.audience-textarea').forEach((textarea) => {
-            const duration = textarea.dataset.duration;
-            const durationLabel = panel.querySelector(`.duration-tab[data-duration="${duration}"]`)?.textContent?.trim();
-            textarea.removeAttribute('role');
-            textarea.setAttribute('aria-label', `${marketplaceT(audience.labelKey)}: ${durationLabel || duration}`);
-        });
+        const textarea = getAudienceTextarea(audience.id);
+        if (!textarea) return;
+        textarea.removeAttribute('role');
+        textarea.setAttribute('aria-label', marketplaceT(audience.labelKey));
     });
 }
 
@@ -246,39 +208,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 arrow.classList.toggle('open', isOpen);
                 header.setAttribute('aria-expanded', String(isOpen));
             });
-
-            panel.querySelectorAll('.duration-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    setActiveDuration(aud.id, tab.dataset.duration);
-                    getAudienceTextarea(aud.id, tab.dataset.duration)?.focus();
-                });
-
-                tab.addEventListener('keydown', event => {
-                    const tabs = Array.from(panel.querySelectorAll('.duration-tab'));
-                    const currentIndex = tabs.indexOf(tab);
-                    let nextIndex = currentIndex;
-
-                    if (event.key === 'ArrowRight') {
-                        nextIndex = (currentIndex + 1) % tabs.length;
-                    } else if (event.key === 'ArrowLeft') {
-                        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-                    } else if (event.key === 'Home') {
-                        nextIndex = 0;
-                    } else if (event.key === 'End') {
-                        nextIndex = tabs.length - 1;
-                    } else {
-                        return;
-                    }
-
-                    event.preventDefault();
-                    const nextTab = tabs[nextIndex];
-                    setActiveDuration(aud.id, nextTab.dataset.duration);
-                    nextTab.focus();
-                });
-            });
-
-            const activeTab = panel.querySelector('.duration-tab.is-active');
-            setActiveDuration(aud.id, activeTab?.dataset.duration || DEFAULT_DURATION);
         }
     });
 
@@ -422,15 +351,12 @@ function clearUI() {
         const panel = document.getElementById(`audience-panel-${aud.id}`);
         const arrow = document.getElementById(`arrow-${aud.id}`);
 
-        durationMap.forEach(duration => {
-            const textarea = getAudienceTextarea(aud.id, duration);
-            if (textarea) textarea.value = '';
-        });
+        const textarea = getAudienceTextarea(aud.id);
+        if (textarea) textarea.value = '';
 
         if(panel) panel.classList.add('hidden');
         if(header) header.setAttribute('aria-expanded', 'false');
         if(arrow) arrow.classList.remove('open');
-        setActiveDuration(aud.id, DEFAULT_DURATION);
     });
     document.getElementById('item-creatore').value = loggedInUsername;
     document.getElementById('btn-purchase-item').classList.add('hidden');
@@ -445,7 +371,7 @@ function resetCommercialFields() {
     document.getElementById('item-license').value = 'CC-BY';
     document.getElementById('item-is-public').checked = true;
     document.getElementById('item-is-private').checked = false;
-    document.getElementById('item-target-audience').value = '';
+    document.getElementById('item-target-audience').value = 'general';
 }
 
 async function loadAssociatedContentOptions(selectedIds = []) {
@@ -530,7 +456,7 @@ async function caricaTestiDaDB(idToLoad) {
         document.getElementById('item-license').value = currentItem.license || 'CC-BY';
         document.getElementById('item-is-public').checked = Boolean(currentItem.isPublic);
         document.getElementById('item-is-private').checked = !currentItem.isPublic;
-        document.getElementById('item-target-audience').value = currentItem.targetAudience || '';
+        document.getElementById('item-target-audience').value = currentItem.targetAudience || 'general';
         await loadAssociatedContentOptions(
             (currentItem.associatedContents || []).map((content) => content._id || content)
         );
@@ -556,48 +482,12 @@ async function caricaTestiDaDB(idToLoad) {
         if (currentItem.descriptions && currentItem.descriptions.length > 0) {
             currentItem.descriptions.forEach(descGroup => {
                 const uiMap = audienceMap.find(a => a.tone === descGroup.tone);
-                if(uiMap && descGroup.texts && descGroup.texts.length > 0) {
-                    const header = document.querySelector(`.audience-header[data-aud="${uiMap.id}"]`);
-                    const panel = document.getElementById(`audience-panel-${uiMap.id}`);
-                    const arrow = document.getElementById(`arrow-${uiMap.id}`);
-                    const loadedDurations = [];
-
-                    // Prima passata: i testi con una lengthCategory riconosciuta
-                    // (15s/30s/60s) vanno dritti nella loro casella.
-                    const legacyTexts = [];
-                    descGroup.texts.forEach((textEntry) => {
-                        if (durationMap.includes(textEntry.lengthCategory)) {
-                            const textarea = getAudienceTextarea(uiMap.id, textEntry.lengthCategory);
-                            if (!textarea) return;
-                            textarea.value = textEntry.text || "";
-                            loadedDurations.push(textEntry.lengthCategory);
-                        } else {
-                            legacyTexts.push(textEntry);
-                        }
-                    });
-
-                    // Seconda passata: testi salvati prima della migrazione a
-                    // 15/30/60s (vecchie categorie 3s/45s) riempiono, in ordine,
-                    // le caselle ancora libere — senza sovrascrivere un testo
-                    // già assegnato nella prima passata e senza scartarne nessuno.
-                    const freeDurations = durationMap.filter((d) => !loadedDurations.includes(d));
-                    legacyTexts.forEach((textEntry, i) => {
-                        const duration = freeDurations[i];
-                        const textarea = duration ? getAudienceTextarea(uiMap.id, duration) : null;
-                        if (!textarea) return;
-                        textarea.value = textEntry.text || "";
-                        loadedDurations.push(duration);
-                    });
-
-                    if (loadedDurations.length > 0) {
-                        panel?.classList.remove('hidden');
-                        header?.setAttribute('aria-expanded', 'true');
-                        arrow?.classList.add('open');
-                        setActiveDuration(
-                            uiMap.id,
-                            loadedDurations.includes(DEFAULT_DURATION) ? DEFAULT_DURATION : loadedDurations[0]
-                        );
-                    }
+                const textarea = uiMap ? getAudienceTextarea(uiMap.id) : null;
+                if (textarea && descGroup.text) {
+                    textarea.value = descGroup.text;
+                    document.getElementById(`audience-panel-${uiMap.id}`)?.classList.remove('hidden');
+                    document.querySelector(`.audience-header[data-aud="${uiMap.id}"]`)?.setAttribute('aria-expanded', 'true');
+                    document.getElementById(`arrow-${uiMap.id}`)?.classList.add('open');
                 }
             });
         }
@@ -615,28 +505,10 @@ document.getElementById('btn-save-exit').addEventListener('click', async () => {
     }
 
     const finalDescriptions = [];
+    // Un testo per tono: { tone, text }.
     audienceMap.forEach(aud => {
-        const texts = durationMap.reduce((entries, duration) => {
-            const textarea = getAudienceTextarea(aud.id, duration);
-            const text = textarea?.value.trim();
-            if (text) {
-                entries.push({
-                    text: text,
-                    lengthCategory: duration,
-                    // Il selettore lingua è stato rimosso dall'interfaccia:
-                    // i testi sono redatti in italiano di default (v. AGENTS.md §3).
-                    language: 'it'
-                });
-            }
-            return entries;
-        }, []);
-
-        if (texts.length > 0) {
-            finalDescriptions.push({
-                tone: aud.tone, 
-                texts: texts
-            });
-        }
+        const text = getAudienceTextarea(aud.id)?.value.trim();
+        if (text) finalDescriptions.push({ tone: aud.tone, text });
     });
 
     if (finalDescriptions.length === 0) {

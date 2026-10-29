@@ -302,27 +302,6 @@
   cursor: not-allowed;
 }
 
-/* Length indicator — which of the 15s / 30s / 60s texts is showing. */
-.visit-length-dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 auto;
-}
-
-.visit-length-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--line-soft);
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.visit-length-dot.is-active {
-  background: var(--accent);
-  transform: scale(1.15);
-}
-
 /* Answer takeover — a question command ('author' / 'year' / 'exit') temporarily
    replaces the description body. Burgundy accent marks it as not-the-description. */
 .visit-description.is-answer {

@@ -35,13 +35,18 @@ public class PrivateItemFixture : IAsyncLifetime
         using var response = await Api.SendAsync(HttpMethod.Post, ItemsApi, token, new
         {
             contentId = _contentId,
-            targetAudience = "Contract test",
+            // A keyword since the item_texts schema change; free text before. Both accept it.
+            targetAudience = "general",
             isPublic,
+            // One text per tone in .NET ({ tone, text }); Node still wants texts[] per length.
+            // Each backend ignores the other's field, so the suite runs against both.
+            // Drop texts[] when Node is retired.
             descriptions = new[]
             {
                 new
                 {
                     tone = "easy",
+                    text = "Contract test description",
                     texts = new[] { new { text = "Contract test description", lengthCategory = "30s" } },
                 },
             },

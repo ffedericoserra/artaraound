@@ -462,48 +462,6 @@
     border-top: 1px solid var(--ink);
 }
 
-.duration-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-bottom: 1px solid rgba(var(--ink-rgb), 0.35);
-}
-
-.duration-tab {
-    min-height: 44px;
-    padding: 12px 8px;
-    border: none;
-    border-right: 1px solid rgba(var(--ink-rgb), 0.35);
-    background: transparent;
-    color: var(--ink);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.duration-tab:last-child {
-    border-right: none;
-}
-
-.duration-tab:hover,
-.duration-tab:focus-visible {
-    background-color: rgba(var(--burgundy-rgb), 0.08);
-    color: var(--burgundy);
-    outline: none;
-}
-
-.duration-tab.is-active {
-    background-color: var(--ink);
-    color: var(--cream);
-}
-
-.duration-tab.is-active:hover,
-.duration-tab.is-active:focus-visible {
-    background-color: var(--burgundy);
-    color: var(--cream);
-}
-
 .audience-textarea {
     width: 100%; min-height: 180px;
     background: transparent; 

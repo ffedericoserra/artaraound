@@ -1,0 +1,38 @@
+# Requests for the IDE's HTTP client. Run `dotnet run -- seed` first.
+@host = http://localhost:8001
+
+### Health
+GET {{host}}/api/health
+
+### Museums, sorted by name
+GET {{host}}/api/museums
+
+### One museum by slug, with floor plans and points of interest
+GET {{host}}/api/museums/galleria-degli-uffizi
+
+### Its artworks (type is case-sensitive: ?type=artwork is a 400)
+GET {{host}}/api/museums/galleria-degli-uffizi/contents?type=Artwork
+
+### Log in as a demo user; paste the token below
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "autore1", "password": "12345678" }
+
+###
+@token = paste-the-token-here
+
+### Current user, with their visits and saved visits
+GET {{host}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Recharge the wallet
+PATCH {{host}}/api/auth/wallet
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "amount": 50 }
+
+### A visit by slug (the answer keys only for its author)
+GET {{host}}/api/visits/uffizi-in-gruppo-dal-medioevo-a-caravaggio
+Authorization: Bearer {{token}}

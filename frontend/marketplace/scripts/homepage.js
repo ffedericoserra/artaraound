@@ -1,5 +1,6 @@
-const isLocal = window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1");
-const baseUrl = isLocal ? "http://localhost:8000" : window.location.origin;
+// The API serves the marketplace, so it is always same-origin (Node on 8000, .NET on 8001).
+// Only a page opened from disk (file://) has no API origin of its own.
+const baseUrl = window.location.protocol === 'file:' ? 'http://localhost:8000' : window.location.origin;
 const myApi = `${baseUrl}/api`;
 const museumPlaceholder = "/uploads/placeholders/template-no-image.jpg";
 

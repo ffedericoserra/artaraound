@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # 1. MongoDB Container
@@ -38,5 +37,50 @@ services:
       JWT_EXPIRES_IN: 1d    
     command: sh -c "npm install && npm start"
 
+  # 3. PostgreSQL for the .NET backend
+  postgres_db:
+    image: postgres:17
+    container_name: local_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: artaround
+      POSTGRES_PASSWORD: artaround
+      POSTGRES_DB: artaround
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U artaround"]
+      interval: 2s
+      retries: 15
+
+  # 4. One-shot: apply EF migrations, then load museums and demo data. Never done by
+  #    the API at startup, so a failed migration cannot leave a half-started server.
+  dotnet_setup:
+    build:
+      context: .
+      dockerfile: backend-dotnet/Dockerfile
+    image: artaround-dotnet
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    environment: &dotnet_env
+      ConnectionStrings__Default: Host=postgres_db;Database=artaround;Username=artaround;Password=artaround
+      Jwt__Key: super-segreto-temporaneo-di-almeno-32-caratteri
+    entrypoint: ["sh", "-c", "dotnet ArtAround.Api.dll migrate && dotnet ArtAround.Api.dll seed"]
+
+  # 5. The .NET API (serves both frontends too), on 8001 so it can run beside Node.
+  dotnet_app:
+    image: artaround-dotnet
+    container_name: local_dotnet_app
+    depends_on:
+      dotnet_setup:
+        condition: service_completed_successfully
+    environment: *dotnet_env
+    ports:
+      - "8001:8080"
+
 volumes:
   mongo_data:
+  postgres_data:
